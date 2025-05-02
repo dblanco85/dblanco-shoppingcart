@@ -30,7 +30,6 @@ public class PaymentController {
 			Payment payment = paymentService.executePayment(order);
 			resp = DtoUtil.paymentToDto(payment);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return resp;
