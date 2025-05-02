@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import db.evaluation.springboot.entity.Product;
+import db.evaluation.springboot.exceptions.ProductNotFoundException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -31,12 +32,14 @@ public class ProductService {
 
 	
 	public Flux<Product> getAll() {
-		return webClient.get().uri("/products").retrieve().bodyToFlux(Product.class);
+		return webClient.get().uri("/products").retrieve().bodyToFlux(Product.class)
+				.switchIfEmpty(Flux.error(new ProductNotFoundException("Products not found.")));
 	}
 
 	
 	public Mono<Product> getById(Integer id) {
-		return webClient.get().uri("/products/{id}", id).retrieve().bodyToMono(Product.class);
+		return webClient.get().uri("/products/{id}", id).retrieve().bodyToMono(Product.class)
+				.switchIfEmpty(Mono.error(new ProductNotFoundException("The product was not found.")));
 	}
 
 	

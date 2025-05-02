@@ -1,5 +1,7 @@
 package db.evaluation.springboot.controller;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,16 +23,17 @@ public class OrderController {
 	}
 	
 	@GetMapping("/{id}")
-	public OrderDto getOrderById(@PathVariable Integer id) {
-		Order order = orderService.getById(id);
-		OrderDto orderDto = new OrderDto();
+	public ResponseEntity<OrderDto> getOrderById(@PathVariable Integer id) {
 		try {
+			Order order = orderService.getById(id);
+			OrderDto orderDto = new OrderDto();
 			orderDto = DtoUtil.orderToDto(order);
+			return ResponseEntity.status(HttpStatus.OK).body(orderDto);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
-		return orderDto;
 	}
 	
 	

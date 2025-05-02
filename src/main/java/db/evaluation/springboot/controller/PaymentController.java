@@ -1,5 +1,7 @@
 package db.evaluation.springboot.controller;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,15 +25,16 @@ public class PaymentController {
 	}
 	
 	@PostMapping
-	public PaymentDto executePayment(@RequestBody OrderDto orderDto) {
+	public ResponseEntity<PaymentDto> executePayment(@RequestBody OrderDto orderDto) {
 		PaymentDto resp = new PaymentDto();
 		try {
 			Order order = DtoUtil.dtoToOrder(orderDto);
 			Payment payment = paymentService.executePayment(order);
 			resp = DtoUtil.paymentToDto(payment);
+			return ResponseEntity.status(HttpStatus.OK).body(resp);
 		} catch (Exception e) {
 			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
-		return resp;
 	}
 }
